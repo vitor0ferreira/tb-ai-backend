@@ -1,0 +1,21 @@
+# Ambiente Virtual
+venv/
+.venv/
+
+# Arquivos de cache do Python
+__pycache__/
+*.pyc
+
+# Arquivos de modelo de IA (são muito grandes!)
+*.h5
+*.keras
+
+# Arquivos de ambiente (se você usar)
+.env
+
+# Outros
+.DS_Store
+
+# Dataset
+dataset/
+.dataset/
