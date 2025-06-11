@@ -7,12 +7,10 @@ import tensorflow as tf
 
 # --- Configuração da Aplicação Flask ---
 app = Flask(__name__)
-# Habilita o CORS para permitir requisições do seu front-end Vercel
+# Habilita o CORS para permitir requisições do front-end da Vercel
 CORS(app) 
 
 # --- Carregamento do Modelo ---
-# Carregamos o modelo uma única vez quando a aplicação inicia
-# para evitar recarregá-lo a cada requisição.
 MODEL_PATH = 'tuberculosis_detector.h5'
 try:
     model = tf.keras.models.load_model(MODEL_PATH)
@@ -41,7 +39,7 @@ def preprocess_image(image_file):
     img_array = np.expand_dims(img_array, axis=0) # Cria o formato (1, 224, 224, 3)
     return img_array
 
-# --- Definição da Rota da API ---
+
 @app.route('/predict', methods=['POST'])
 def predict():
     """
@@ -50,21 +48,17 @@ def predict():
     if model is None:
         return jsonify({'error': 'Modelo não está carregado'}), 500
 
-    # Verifica se a requisição contém um arquivo de imagem
     if 'file' not in request.files:
         return jsonify({'error': 'Nenhum arquivo enviado'}), 400
 
     file = request.files['file']
 
-    # Verifica se o nome do arquivo está vazio
     if file.filename == '':
         return jsonify({'error': 'Nome de arquivo inválido'}), 400
 
     try:
-        # Pré-processa a imagem
         processed_image = preprocess_image(file)
 
-        # Faz a predição com o modelo
         prediction = model.predict(processed_image)
         
         # O resultado do modelo é um array, pegamos o primeiro (e único) valor.
@@ -80,8 +74,6 @@ def predict():
     except Exception as e:
         return jsonify({'error': f'Erro ao processar a imagem: {str(e)}'}), 500
 
-# --- Ponto de Entrada para Execução ---
+
 if __name__ == '__main__':
-    # '0.0.0.0' faz o servidor ser acessível na sua rede local.
-    # A porta pode ser qualquer uma disponível, como 5000.
     app.run(host='0.0.0.0', port=5000, debug=True)

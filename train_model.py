@@ -6,22 +6,19 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
 # --- Parâmetros de Configuração ---
-IMG_WIDTH, IMG_HEIGHT = 224, 224 # Tamanho que a MobileNetV2 espera
+IMG_WIDTH, IMG_HEIGHT = 224, 224 # Tamanho que a MobileNetV2 usa
 BATCH_SIZE = 32
 TRAIN_DATA_DIR = 'dataset/train'
 VALIDATION_DATA_DIR = 'dataset/validation'
-EPOCHS = 10 # Número de vezes que o modelo verá todo o dataset
+EPOCHS = 10 # Número de vezes que o modelo vai rodar todo o dataset
 
 def build_model():
-    """
-    Constrói o modelo de Rede Neural Convolucional usando Transfer Learning com MobileNetV2.
-    """
+
     # Carrega o modelo base MobileNetV2, pré-treinado no dataset ImageNet
     # include_top=False: remove a camada de classificação final original do modelo.
     base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(IMG_WIDTH, IMG_HEIGHT, 3))
 
     # Congela as camadas do modelo base para que não sejam treinadas novamente.
-    # Elas já contêm conhecimento valioso sobre detecção de características em imagens.
     for layer in base_model.layers:
         layer.trainable = False
 
@@ -45,6 +42,7 @@ def main():
     Função principal que executa a preparação dos dados, compilação e treinamento do modelo.
     """
     # --- Preparação dos Dados ---
+
     # ImageDataGenerator aplica transformações às imagens em tempo real (Data Augmentation)
     # para aumentar a variedade do dataset e evitar overfitting.
     train_datagen = ImageDataGenerator(
@@ -56,14 +54,14 @@ def main():
         fill_mode='nearest'
     )
     
-    validation_datagen = ImageDataGenerator(rescale=1./255) # Apenas normalizamos os dados de validação
+    validation_datagen = ImageDataGenerator(rescale=1./255) # Normalizamos dados de validação
 
-    # Cria geradores de dados que leem as imagens das pastas
+    # Cria geradores de dados que leem as imagens
     train_generator = train_datagen.flow_from_directory(
         TRAIN_DATA_DIR,
         target_size=(IMG_WIDTH, IMG_HEIGHT),
         batch_size=BATCH_SIZE,
-        class_mode='binary' # Classificação binária (normal/tuberculosis)
+        class_mode='binary' # (normal/tuberculosis)
     )
 
     validation_generator = validation_datagen.flow_from_directory(
