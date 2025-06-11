@@ -6,11 +6,10 @@ venv/
 __pycache__/
 *.pyc
 
-# Arquivos de modelo de IA (são muito grandes!)
-*.h5
+# Arquivos de modelo de IA
 *.keras
 
-# Arquivos de ambiente (se você usar)
+# Arquivos de ambiente
 .env
 
 # Outros
